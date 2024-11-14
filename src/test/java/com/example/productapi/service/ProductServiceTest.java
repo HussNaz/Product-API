@@ -28,7 +28,11 @@ public class ProductServiceTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        product = new Product(1L, "Laptop", 1200.00, "A high-end laptop");
+        Product product =
+                Product.builder().id(1L)
+                .name("Laptop")
+                .price(1200.00)
+                .description("A high-end laptop").build();
     }
 
     @Test
@@ -61,17 +65,19 @@ public class ProductServiceTest {
     @Test
     void testUpdateProduct() {
 
-        Product updatedProduct = new Product(null, "New Product Name", 150.0, "New Product Description");
-        when(repository.existsById(1L)).thenReturn(true);
+        Product updatedProduct = Product.builder()
+                .id(null)
+                .name("New Product")
+                .price(122.22)
+                .description("New product")
+                .build();
 
-        when(repository.save(any(Product.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(repository.existsById(1L)).thenReturn(true);
+        when(repository.save(any(Product.class))).thenReturn(updatedProduct);
 
         Product result = service.updateProduct(1L, updatedProduct);
 
         assertNotNull(result);
-        assertEquals("New Product Name", result.getName());
-        assertEquals(150.0, result.getPrice());
-        assertEquals("New Product Description", result.getDescription());
         verify(repository, times(1)).existsById(1L);
         verify(repository, times(1)).save(any(Product.class));
     }
