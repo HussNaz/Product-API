@@ -2,29 +2,32 @@ package com.example.productapi.controller;
 
 import com.example.productapi.model.Product;
 import com.example.productapi.service.ProductService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequestMapping("/products")
 public class ProductController {
     private final ProductService service;
 
-    public ProductController(ProductService service) {
+    public ProductController(ProductService service)
+    {
         this.service = service;
     }
 
     @PostMapping
-    public ResponseEntity<Product> createProduct(@RequestBody Product
-                                                         product) {
-        return new ResponseEntity<>(service.createProduct(product),
-                HttpStatus.CREATED);
+    public ResponseEntity<Product> createProduct(@RequestBody Product product) {
+        return new ResponseEntity<>(service.createProduct(product), HttpStatus.CREATED);
     }
 
-    @GetMapping
+
+
+    @GetMapping("/all")
     public List<Product> getAllProducts() {
         return service.getAllProducts();
     }
@@ -37,9 +40,14 @@ public class ProductController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    @GetMapping("/name")
+    public ResponseEntity<Product> findProductByName(@RequestParam String name) {
+        log.info("calling from findByName method");
+        return service.findProductByName(name);
+    }
+
     @PutMapping("/{id}")
-    public ResponseEntity<Product> updateProduct(@PathVariable Long
-                                                         id, @RequestBody Product product) {
+    public ResponseEntity<Product> updateProduct(@PathVariable Long id, @RequestBody Product product) {
         Product updated = service.updateProduct(id, product);
         return updated != null ? ResponseEntity.ok(updated) :
                 ResponseEntity.notFound().build();

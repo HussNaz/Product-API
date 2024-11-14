@@ -2,6 +2,7 @@ package com.example.productapi.service;
 
 import com.example.productapi.model.Product;
 import com.example.productapi.repository.ProductRepository;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,6 +19,11 @@ public class ProductService {
 
     public List<Product> getAllProducts() {
         return repository.findAll();
+    }
+
+    public ResponseEntity<Product> findProductByName(String name) {
+        Optional<Product> product = repository.findByName(name);
+        return product.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }
 
     public Optional<Product> getProductById(Long id) {
